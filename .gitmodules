@@ -1,0 +1,6 @@
+[submodule "examples/libnmea"]
+	path = examples/libnmea
+	url = https://github.com/jacketizer/libnmea.git
+[submodule "extern/libnmea"]
+	path = extern/libnmea
+	url = https://github.com/jacketizer/libnmea.git
