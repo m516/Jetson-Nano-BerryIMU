@@ -1,6 +1,7 @@
 #pragma once
 
 #include "uart_connection.h"
+#include "nmea.h"
 
 #ifdef __cplusplus
 extern "C" {

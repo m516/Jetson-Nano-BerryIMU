@@ -12,6 +12,7 @@ int main()
 
     for(int i = 0; i < 100; i++){
         berryIMU_GPS_update();
+        //printf("Return code: %d\n", berryIMU_GPS_update());
     }
 
     berryIMU_GPS_destroy();

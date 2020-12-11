@@ -3,6 +3,9 @@ project(libBerryIMU C)
 
 #Include libraries
 add_subdirectory(extern/libnmea)
+include_directories(extern)
+include_directories(extern/libnmea/src/nmea)
+include_directories(extern/libnmea/src/parsers)
 
 #Find files
 set(LIBBERRYIMU_HEADERS

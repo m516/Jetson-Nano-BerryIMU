@@ -25,11 +25,13 @@ typedef struct uart_connection{
  * @param port_options Other configuration parameters for the UART connection.
  * @return int 0 if successful, negative otherwise
  */
-int uart_connection_init(uart_connection_t* uart_connection, const char* target, speed_t speed, struct termios port_options);
+int uart_connection_init(uart_connection_t* uart_connection, const char* target, speed_t speed);
 
 int uart_connection_is_live(uart_connection_t uart_connection);
 
 int uart_connection_write(uart_connection_t uart_connection, char* message, size_t message_length);
+
+ssize_t uart_connection_read(uart_connection_t uart_connection, void * buf, size_t nbytes);
 
 int uart_connection_readln(uart_connection_t uart_connection, char* destination, size_t max_message_length);
 
