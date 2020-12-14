@@ -16,8 +16,8 @@ Lib BerryIMU is a C library that acts as a simple, intuitive interface between a
   - [Magnetometer](#magnetometer)
   - [Barometer/Altimeter](#barometeraltimeter)
   - [Thermometer](#thermometer)
-  - [Raspberry Pi Support (help wanted)](#raspberry-pi-support-help-wanted)
-  - [Installing the Library (help wanted)](#installing-the-library-help-wanted)
+  - [Raspberry Pi Support](#raspberry-pi-support)
+  - [Installing the Library](#installing-the-library)
 - [Licensing](#licensing)
 - [Reference](#reference)
 - [Contrubuting](#contrubuting)
@@ -82,13 +82,13 @@ I'm guessing on these specs; I'm not sure if the BM388 has a temperature sensor 
 - **Connection type:** I2C
   - **Default address:** 0x77
 
-### Raspberry Pi Support (help wanted)
+### Raspberry Pi Support
 
 I think this library could be useful for Raspberry Pi users. Unfortunately, I don't have a new Raspberry Pi to test this library on, so I haven't made an effort to try and write code that may or may not work.
 
 For more information, please refer to the corresponding [issue](https://github.com/m516/libberryimu/issues/1).
 
-### Installing the Library (help wanted)
+### Installing the Library
 
 CMake makes it easy to install C libraries. I'm not sure how that process works though. 
 
@@ -112,4 +112,4 @@ The contents of this repository are heavily based on the official Ozzmaker instr
   - Functionality for new sensors (like a new accelerometer part) are placed in a new folder whose name matches the part number.
   - All public-facing functions for sensors begin with the part number of that sensor (to avoid naming conflicts)
   - Feel free to make your own API. If you do, please document it so that others know how to use it!
-- I'll especially need testing help from people with the Raspberry Pi 2, 3, and 4 and the BerryIMU v2 and v4 because I don't have either of these devices.
+- I'll especially need testing help from people with the Raspberry Pi 2, 3, and 4 and the BerryIMU v2 and v4 because I don't have any of these devices.
