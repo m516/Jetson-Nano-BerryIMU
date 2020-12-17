@@ -36,6 +36,21 @@ add_library(
 target_include_directories(berryimu BEFORE INTERFACE src/)
 target_link_libraries(berryimu PRIVATE lwgps)
 
+#Manually place all binaries into a folder under bin/
+set(BUILD_FULL_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/examples/bin/)
+message("Example Output directory: ${BUILD_FULL_DIRECTORY}")
+# First for the generic no-config case (e.g. with mingw)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY  ${BUILD_FULL_DIRECTORY})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  ${BUILD_FULL_DIRECTORY})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY  ${BUILD_FULL_DIRECTORY})
+# Second, for multi-config builds (e.g. msvc)
+foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
+    string( TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG )
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${BUILD_FULL_DIRECTORY})
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${BUILD_FULL_DIRECTORY})
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${BUILD_FULL_DIRECTORY})
+endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
+
 #TODO move to separate CMAKE file
 set(proj_sources
 "examples/01_read_raw_GPS_data/main.c"

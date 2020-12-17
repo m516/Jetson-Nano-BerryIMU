@@ -1,1 +1,6 @@
 build/
+CMakeFiles/
+examples/bin/
+*.a
+Makefile
+CMakeCache.txt
