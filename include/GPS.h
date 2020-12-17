@@ -1,11 +1,13 @@
 #pragma once
 
-#include "uart_connection.h"
-#include "nmea.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+#include "lwgps/lwgps.h"
+
+extern lwgps_t hgps;
 
 int berryIMU_GPS_init();
 

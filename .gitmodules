@@ -4,3 +4,6 @@
 [submodule "extern/libnmea"]
 	path = extern/libnmea
 	url = https://github.com/jacketizer/libnmea.git
+[submodule "extern/lwgps"]
+	path = extern/lwgps
+	url = https://github.com/MaJerle/lwgps.git

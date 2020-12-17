@@ -3,17 +3,17 @@
 #include <stdbool.h>
 #include <ctype.h>
 
-#include "uart_connection.h"
+#include "CAM-M8-UART.h"
 
-#define UART_CONNECTION_RUNTIME_ERROR(...) {                                                              \
-    fprintf(stderr, "A runtime error related to a uart_connection has occured.\n");                       \
+#define CAM_M8_UART_RUNTIME_ERROR(...) {                                                              \
+    fprintf(stderr, "A runtime error related to a CAM_M8_UART has occured.\n");                       \
     fprintf(stderr, "Encountered on %s:%d\n", __FILE__, __LINE__);                                        \
     fprintf(stderr, "In function %s\n", __func__);                                                        \
     fprintf(stderr, __VA_ARGS__);                                                                         \
 }                                                                                                         \
 
-int uart_connection_init(uart_connection_t* uart_connection, const char* target, speed_t speed){
-    uart_connection->fid = -1;
+int CAM_M8_UART_init(CAM_M8_UART_t* CAM_M8_UART, const char* target, speed_t speed){
+    CAM_M8_UART->fid = -1;
     struct termios port_options; // Create the structure
 
 
@@ -32,19 +32,15 @@ int uart_connection_init(uart_connection_t* uart_connection, const char* target,
     //                 Caution: VMIN and VTIME flags are ignored if O_NONBLOCK flag is set.
     //	    O_NOCTTY - When set and path identifies a terminal device, open() shall not cause the terminal device to become the controlling terminal for the process.
 
-    uart_connection->fid = open(target, O_RDWR | O_NOCTTY);
-    tcgetattr(uart_connection->fid, &port_options);
+    CAM_M8_UART->fid = open(target, O_RDWR | O_NOCTTY);
+    tcgetattr(CAM_M8_UART->fid, &port_options);
 
+    tcflush(CAM_M8_UART->fid, TCIFLUSH);
+    tcflush(CAM_M8_UART->fid, TCIOFLUSH);
 
-
- 
-
-    tcflush(uart_connection->fid, TCIFLUSH);
-    tcflush(uart_connection->fid, TCIOFLUSH);
-
-    if (uart_connection->fid == -1)
+    if (CAM_M8_UART->fid == -1)
     {
-        UART_CONNECTION_RUNTIME_ERROR("Error - Unable to open UART.  Ensure it is not in use by another application\n");
+        CAM_M8_UART_RUNTIME_ERROR("Error - Unable to open UART.  Ensure it is not in use by another application\n");
         return -1;
     }
 
@@ -71,49 +67,54 @@ int uart_connection_init(uart_connection_t* uart_connection, const char* target,
     port_options.c_cflag &= ~PARENB; // Disables the Parity Enable bit(PARENB),So No Parity
     port_options.c_cflag &= ~CSTOPB; // CSTOPB = 2 Stop bits,here it is cleared so 1 Stop bit
     port_options.c_cflag &= ~CSIZE;  // Clears the mask for setting the data size
+    port_options.c_iflag &= ~ICRNL;  // Don't map CR to NL
     port_options.c_cflag |= CS8;     // Set the data bits = 8
     port_options.c_cflag |= CREAD | CLOCAL;                  // Enable receiver,Ignore Modem Control lines
     port_options.c_oflag = 0; // No Output Processing
     port_options.c_lflag = 0; // No terminal functions
 
     // Set the attributes to the termios structure
-    int att = tcsetattr(uart_connection->fid, TCSANOW, &port_options);
+    int att = tcsetattr(CAM_M8_UART->fid, TCSANOW, &port_options);
 
     if (att != 0)
     {
-        UART_CONNECTION_RUNTIME_ERROR("Error in Setting port attributes\n");
+        CAM_M8_UART_RUNTIME_ERROR("Error in Setting port attributes\n");
         return -2;
     }
 
     // Flush Buffers
-    tcflush(uart_connection->fid, TCIFLUSH);
-    tcflush(uart_connection->fid, TCIOFLUSH);
+    tcflush(CAM_M8_UART->fid, TCIFLUSH);
+    tcflush(CAM_M8_UART->fid, TCIOFLUSH);
 
     return 0;
 }
 
-
-int uart_connection_write(uart_connection_t uart_connection, char* message, size_t message_length){
-    if(!uart_connection_is_live(uart_connection)){
-        UART_CONNECTION_RUNTIME_ERROR("Connection not initialized. fid = %d\n", uart_connection.fid);
-        return -1;
-    }
-    return write(uart_connection.fid, &message, message_length); //Filestream, bytes to write, number of bytes to write
+int CAM_M8_UART_is_live(CAM_M8_UART_t CAM_M8_UART){
+    return CAM_M8_UART.fid>0;
 }
 
 
-ssize_t uart_connection_read(uart_connection_t uart_connection, void * buf, size_t nbytes){
-    if(!uart_connection_is_live(uart_connection)){
-        UART_CONNECTION_RUNTIME_ERROR("Connection not initialized. fid = %d\n", uart_connection.fid);
+int CAM_M8_UART_write(CAM_M8_UART_t CAM_M8_UART, char* message, size_t message_length){
+    if(!CAM_M8_UART_is_live(CAM_M8_UART)){
+        CAM_M8_UART_RUNTIME_ERROR("Connection not initialized. fid = %d\n", CAM_M8_UART.fid);
         return -1;
     }
-    return read(uart_connection.fid, buf, nbytes);
+    return write(CAM_M8_UART.fid, &message, message_length); //Filestream, bytes to write, number of bytes to write
 }
 
-int uart_connection_readln(uart_connection_t uart_connection, char* destination, size_t max_message_length){
+
+ssize_t CAM_M8_UART_read(CAM_M8_UART_t CAM_M8_UART, void * buf, size_t nbytes){
+    if(!CAM_M8_UART_is_live(CAM_M8_UART)){
+        CAM_M8_UART_RUNTIME_ERROR("Connection not initialized. fid = %d\n", CAM_M8_UART.fid);
+        return -1;
+    }
+    return read(CAM_M8_UART.fid, buf, nbytes);
+}
+
+int CAM_M8_UART_readln(CAM_M8_UART_t CAM_M8_UART, char* destination, size_t max_message_length){
     
-    if(!uart_connection_is_live(uart_connection)){
-        UART_CONNECTION_RUNTIME_ERROR("Connection not initialized. fid = %d\n", uart_connection.fid);
+    if(!CAM_M8_UART_is_live(CAM_M8_UART)){
+        CAM_M8_UART_RUNTIME_ERROR("Connection not initialized. fid = %d\n", CAM_M8_UART.fid);
         return -1;
     }
 
@@ -123,10 +124,10 @@ int uart_connection_readln(uart_connection_t uart_connection, char* destination,
 
 
     while(i<end_of_message){
-        ssize_t read_result = read(uart_connection.fid, (void *)i, 1);
+        ssize_t read_result = read(CAM_M8_UART.fid, (void *)i, 1);
         if(i==destination && (isspace(*i) ||  iscntrl(*i))) continue; //Strip beginning whitespace and null characters
         if(read_result!=1) {
-            UART_CONNECTION_RUNTIME_ERROR("Failed to read a character. read() returned %ld\n", read_result);
+            CAM_M8_UART_RUNTIME_ERROR("Failed to read a character. read() returned %ld\n", read_result);
             return -1;
         }
         if(*i=='\n') break;
@@ -143,8 +144,8 @@ int uart_connection_readln(uart_connection_t uart_connection, char* destination,
     return size_read-1;
 }
 
-int uart_connection_destroy(uart_connection_t* uart_connection){
-    int r = close(uart_connection->fid);
-    uart_connection->fid = -1;
+int CAM_M8_UART_destroy(CAM_M8_UART_t* CAM_M8_UART){
+    int r = close(CAM_M8_UART->fid);
+    CAM_M8_UART->fid = -1;
     return r;
 }

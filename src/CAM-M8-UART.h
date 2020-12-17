@@ -9,15 +9,15 @@ extern "C" {
 #endif
 
 
-typedef struct uart_connection{
+typedef struct CAM_M8_UART{
     int fid; //Negative numbers are dead, positive ones are alive and unique
-} uart_connection_t;
+} CAM_M8_UART_t;
 
 
 /**
  * @brief Initiailizes a UART connection
  * 
- * @param uart_connection The destination address of the newly created UART connection
+ * @param CAM_M8_UART The destination address of the newly created UART connection
  * @param target A path to the file read by the library. For example, this value is 
  * usually "/dev/serial0" on Raspberry Pis and "/dev/ttyTHS1" on Jetson Nanos
  * @param speed The baud rate of the serial conenction. For example, 
@@ -25,17 +25,17 @@ typedef struct uart_connection{
  * @param port_options Other configuration parameters for the UART connection.
  * @return int 0 if successful, negative otherwise
  */
-int uart_connection_init(uart_connection_t* uart_connection, const char* target, speed_t speed);
+int CAM_M8_UART_init(CAM_M8_UART_t* CAM_M8_UART, const char* target, speed_t speed);
 
-int uart_connection_is_live(uart_connection_t uart_connection);
+int CAM_M8_UART_is_live(CAM_M8_UART_t CAM_M8_UART);
 
-int uart_connection_write(uart_connection_t uart_connection, char* message, size_t message_length);
+int CAM_M8_UART_write(CAM_M8_UART_t CAM_M8_UART, char* message, size_t message_length);
 
-ssize_t uart_connection_read(uart_connection_t uart_connection, void * buf, size_t nbytes);
+ssize_t CAM_M8_UART_read(CAM_M8_UART_t CAM_M8_UART, void * buf, size_t nbytes);
 
-int uart_connection_readln(uart_connection_t uart_connection, char* destination, size_t max_message_length);
+int CAM_M8_UART_readln(CAM_M8_UART_t CAM_M8_UART, char* destination, size_t max_message_length);
 
-int uart_connection_destroy(uart_connection_t* uart_connection);
+int CAM_M8_UART_destroy(CAM_M8_UART_t* CAM_M8_UART);
 
 
 #ifdef __cplusplus
